@@ -1,0 +1,59 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+div#canvas-wrapper {
+  border-top: 1px solid #DDD;
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -o-box-sizing: border-box;
+  -ms-box-sizing: border-box;
+}
+
+div#controls .button {
+  margin-bottom: 0;
+}
+
+div#controls .right.button-group {
+  margin-right: 0;
+}
+
+div#controls .button-group > li {
+  margin: 0;
+}
+
+div#controls .right .button-group .button {
+  margin-right: 0;
+}
+
+nav.top-bar li label#status-text {
+  display: block;
+  width: 100%;
+  color: #CCC;
+  padding: 0 15px;
+  font-size: 0.8125rem;
+  font-style: italic;
+  line-height: 45px;
+  cursor: default;
+}
+
+canvas {
+  background-color: #CCC;
+  display: block;
+}
+
+#initial-loading {
+  /* TODO: fix me so it's not that shifty */
+  /* css.gif */
+  color: green;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: -40px;
+  margin-left: -40px;
+  width: 80px;
+  height: 80px;
+}
