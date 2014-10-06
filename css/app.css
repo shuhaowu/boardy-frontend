@@ -49,6 +49,7 @@ nav.top-bar #title-edit {
 canvas {
   background-color: #CCC;
   display: block;
+  cursor: crosshair;
 }
 
 #initial-loading {
