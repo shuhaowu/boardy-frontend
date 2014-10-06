@@ -13,7 +13,15 @@
   <nav id="nav" class="top-bar" role="navigation" data-topbar>
     <ul class="title-area">
       <li class="name">
-        <h1><a href="#">Title of this document</a></h1>
+        <h1>
+          <a href="#">
+            <span id="document-title">Title of this document</span>
+            <span id="title-edit">
+              <i class="fa fa-save"></i>
+              <i class="fa fa-rotate-left"></i>
+            </span>
+          </a>
+        </h1>
       </li>
     </ul>
 
@@ -32,15 +40,16 @@
 
   <div id="controls" class="button-bar">
     <ul class="button-group">
-      <li><a href="#" class="tiny secondary button"><i class="fa fa-file-o"></i> New</a></li>
-      <li><a href="#" class="tiny secondary button"><i class="fa fa-download"></i> Export</a></li>
+      <li><a href="#" class="tiny secondary button"><i class="fa fa-file-o fa-fw"></i> New</a></li>
+      <li><a href="#" class="tiny secondary button"><i class="fa fa-download fa-fw"></i> Export</a></li>
     </ul>
     <ul class="button-group">
-      <li><a href="#" class="tiny secondary button"><i class="fa fa-undo"></i> Undo</a></li>
-      <li><a href="#" class="tiny secondary button"><i class="fa fa-repeat"></i> Redo</a></li>
+      <li><a href="#" class="tiny secondary button"><i class="fa fa-undo fa-fw"></i> Undo</a></li>
+      <li><a href="#" class="tiny secondary button"><i class="fa fa-repeat fa-fw"></i> Redo</a></li>
     </ul>
     <ul class="right button-group">
-      <li><a href="#" class="tiny button"><i class="fa fa-share-alt"></i> Share</a></li>
+      <li><a href="#" class="tiny button"><i class="fa fa-cog fa-fw"></i> Settings</a></li>
+      <li><a href="#" class="tiny button"><i class="fa fa-share-alt fa-fw"></i> Share</a></li>
     </ul>
   </div>
 
@@ -51,7 +60,11 @@
   <i class="fa fa-5x fa-spin fa-circle-o-notch"></i>
   </div>
 
-  <script src="js/vendor/zepto.js"></script>
+  <script src="js/vendor/zepto.min.js"></script>
+  <script src="js/src/common.js"></script>
+  <script src="js/src/canvas.js"></script>
+  <script src="js/src/local.js"></script>
+  <script src="js/src/remote.js"></script>
   <script src="js/src/init.js"></script>
   </body>
 </html>

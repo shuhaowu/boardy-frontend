@@ -11,6 +11,7 @@ div#canvas-wrapper {
   -moz-box-sizing: border-box;
   -o-box-sizing: border-box;
   -ms-box-sizing: border-box;
+  overflow: auto;
 }
 
 div#controls .button {
@@ -21,7 +22,7 @@ div#controls .right.button-group {
   margin-right: 0;
 }
 
-div#controls .button-group > li {
+div#controls .button-group > li:last-child {
   margin: 0;
 }
 
@@ -38,6 +39,11 @@ nav.top-bar li label#status-text {
   font-style: italic;
   line-height: 45px;
   cursor: default;
+}
+
+nav.top-bar #title-edit {
+  display: none;
+  margin-left: 5px;
 }
 
 canvas {
