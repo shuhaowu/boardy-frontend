@@ -1,7 +1,28 @@
 "use strict";
 
 module.exports = function(grunt) {
-  var ALL_OUR_JS_SOURCES = ["js/src/**/*.js"];
+
+  var VENDOR_SOURCES_IN_ORDER = [
+    "js/vendor/**/*.js",
+  ];
+
+  var DEV_JS_SOURCES_IN_ORDER = [
+    "js/src/common.js",
+    "js/src/canvas.js",
+    "js/src/local.js",
+    "js/src/remote.js",
+    "js/src/init.js",
+  ];
+
+  var TEST_JS_SOURCES_IN_ORDER = [
+    "tests/test_init.js",
+    "tests/**/*_tests.js",
+  ];
+
+  var ALL_OUR_JS_SOURCES = DEV_JS_SOURCES_IN_ORDER.concat(TEST_JS_SOURCES_IN_ORDER);
+  var ALL_JS_SOURCES = VENDOR_SOURCES_IN_ORDER.concat(ALL_OUR_JS_SOURCES);
+  var KARMA_JS_SOURCES = ALL_JS_SOURCES.slice();
+  KARMA_JS_SOURCES.splice(KARMA_JS_SOURCES.indexOf("js/src/init.js"), 1);
 
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
@@ -14,21 +35,57 @@ module.exports = function(grunt) {
         expr: true,
         boss: true,
         globals: {
+          // All boardy objects
+          Title: false,
+          Canvas: false,
+          LocalDocument: false,
+
           $: false,
-          module: false
+          module: false,
+          console: false,
+
+           // jasmine stuff
+          describe: false,
+          expect: false,
+          it: false,
+          beforeEach: false,
+          afterEach: false,
+          jasmine: false,
         }
       }
     },
     watch: {
+      options: {
+        atBegin: true
+      },
       jswatch: {
         files: ALL_OUR_JS_SOURCES,
-        tasks: ["jshint"]
+        tasks: ["jshint", "karma:dev:run"]
+      }
+    },
+    karma: {
+      dev: {
+        options: {
+          files: KARMA_JS_SOURCES
+        },
+        configFile: "test.conf.js",
+        background: true,
+        autoWatch: false
       }
     }
   });
 
-  grunt.loadNpmTasks("grunt-contrib-jshint");
-  grunt.loadNpmTasks('grunt-contrib-watch');
+  // I know this is shitty, but I don't have a better solution right now
+  grunt.registerTask("wait", "waits a couple of seconds until karma starts everything", function() {
+    var done = this.async();
+    setTimeout(function() {
+      done(true);
+    }, 5000);
+  });
 
-  grunt.registerTask("default", ["jshint", "watch"]);
+  grunt.loadNpmTasks("grunt-contrib-jshint");
+  grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks("grunt-karma");
+
+  grunt.registerTask("default", ["karma:dev:start", "wait", "watch"]);
 };
