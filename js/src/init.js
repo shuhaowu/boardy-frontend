@@ -1,6 +1,6 @@
 "use strict";
 
-var Document = LocalDocument;
+window.Document = LocalDocument;
 
 function Application() {
 }

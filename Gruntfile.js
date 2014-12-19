@@ -54,6 +54,32 @@ module.exports = function(grunt) {
         }
       }
     },
+    karma: {
+      dev: {
+        options: {
+          files: KARMA_JS_SOURCES
+        },
+        configFile: "test.conf.js",
+        background: true,
+        autoWatch: false
+      },
+      ci: {
+        options: {
+          files: VENDOR_SOURCES_IN_ORDER.concat(["build/boardy.min.js"]).concat(TEST_JS_SOURCES_IN_ORDER)
+        },
+        configFile: "test.conf.js",
+        background: false,
+        singleRun: true,
+        browsers: ["Firefox"]
+      }
+    },
+    uglify: {
+      prod: {
+        files: {
+          "build/boardy.min.js": DEV_JS_SOURCES_IN_ORDER
+        }
+      }
+    },
     watch: {
       options: {
         atBegin: true
@@ -63,16 +89,6 @@ module.exports = function(grunt) {
         tasks: ["jshint", "karma:dev:run"]
       }
     },
-    karma: {
-      dev: {
-        options: {
-          files: KARMA_JS_SOURCES
-        },
-        configFile: "test.conf.js",
-        background: true,
-        autoWatch: false
-      }
-    }
   });
 
   // I know this is shitty, but I don't have a better solution right now
@@ -85,7 +101,9 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks("grunt-karma");
 
   grunt.registerTask("default", ["karma:dev:start", "wait", "watch"]);
+  grunt.registerTask("prod", ["jshint", "uglify:prod", "karma:ci:start"]);
 };
