@@ -23,6 +23,7 @@ function Canvas() {
 
     this.raw_canvas.width = this.canvas_wrapper.width();
     this.raw_canvas.height = this.canvas_wrapper.height();
+    this.restore(this._points);
   };
   resize_canvas = resize_canvas.bind(this);
 
@@ -48,7 +49,8 @@ function Canvas() {
   this._event_handlers = {
     pen_path_started: [],
     point_recorded: [], // Light operations only as this is called everytime a point is recorded
-    pen_path_finished: []
+    pen_path_finished: [],
+    canvas_restored: []
   };
 }
 
@@ -71,6 +73,27 @@ Canvas.prototype.trigger = function(ev, event_obj) {
   }
 
   return true;
+};
+
+// O(n) restore time may be bad
+Canvas.prototype.restore = function(points) {
+  if (!points) {
+    // This is probably the first resize_canvas we called
+    return;
+  }
+
+  if (points.length <= 1) {
+    this._points = points;
+    return;
+  }
+
+  this._points = [points[0]];
+  for (var i=1, l=points.length; i<l; i++) {
+    this._points.push(points[i]);
+    if (!points[i].start) {
+      this.draw_path(points[i]);
+    }
+  }
 };
 
 Canvas.prototype.get_current_pressure = function() {
@@ -121,9 +144,7 @@ Canvas.prototype.finish_path = function(reason, point) {
 
 Canvas.prototype.on_mousedown = function(e) {
   this._painting = true;
-  this.context.beginPath();
-  var point = this.record_point(e, true);
-  this.context.moveTo(point.x, point.y);
+  this.record_point(e, true);
 };
 
 Canvas.prototype.on_mousemove = function(e) {
