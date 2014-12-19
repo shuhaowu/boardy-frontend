@@ -1,13 +1,13 @@
 "use strict";
 
-window.Document = LocalDocument;
+var Doc = LocalDocument;
 
 function Application() {
 }
 
 Application.prototype.initialize = function() {
   this.canvas = new Canvas();
-  this.document = new Document();
+  this.document = new Doc();
   $("#initial-loading").remove();
 };
 

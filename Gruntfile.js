@@ -70,7 +70,8 @@ module.exports = function(grunt) {
         configFile: "test.conf.js",
         background: false,
         singleRun: true,
-        browsers: ["Firefox"]
+        browsers: ["Firefox"],
+        reporters: "dots"
       }
     },
     uglify: {
