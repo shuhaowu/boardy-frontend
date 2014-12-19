@@ -7,8 +7,10 @@ function Canvas() {
   this.canvas_wrapper.append(this.raw_canvas);
 
   var resize_canvas = function() {
-    var nav_height = $("#nav").outerHeight();
-    var controls_height = $("#controls").outerHeight();
+    var $nav = $("#nav");
+    var $controls = $("#controls");
+    var nav_height = $nav.length > 0 ? $nav.outerHeight() : 0;
+    var controls_height = $controls.length > 0 ? $controls.outerHeight() : 0;
     this.canvas_wrapper.css({
       "height": window.innerHeight - nav_height - controls_height,
       "width": window.innerWidth,
@@ -42,22 +44,58 @@ function Canvas() {
 
   this.context.strokeStyle = this.DEFAULT_COLOR;
   this.context.lineJoin = "round";
+
+  this._event_handlers = {
+    pen_path_started: [],
+    point_recorded: [], // Light operations only as this is called everytime a point is recorded
+    pen_path_finished: []
+  };
 }
+
+Canvas.prototype.bind = function(ev, f) {
+  var l = this._event_handlers[ev];
+  if (l) {
+    l.push(f);
+  } else {
+    throw "event '" + ev + "' doesn't exist";
+  }
+};
+
+Canvas.prototype.trigger = function(ev, event_obj) {
+  var handlers = this._event_handlers[ev];
+  if (handlers) {
+    for (var i=0; i<handlers.length; i++) {
+      // TODO: preventDefault? Or Canvas gotta can?
+      handlers[i](event_obj);
+    }
+  }
+
+  return true;
+};
 
 Canvas.prototype.get_current_pressure = function() {
   return this.DEFAULT_PRESSURE;
 };
 
-Canvas.prototype.record_point = function(e, start) {
+Canvas.prototype.get_point_from_event = function(e, start) {
   var pressure = this.get_current_pressure();
   var x = e.pageX - e.target.offsetLeft;
   var y = e.pageY - e.target.offsetTop;
-  var point = {
+  return {
     x:     x,
     y:     y,
     p:     pressure,
-    start: start
+    start: !!start
   };
+};
+
+Canvas.prototype.record_point = function(e, start) {
+  var point = this.get_point_from_event(e, start);
+  var evdata = {point: point};
+  if (start) {
+    this.trigger("pen_path_started", evdata);
+  }
+  this.trigger("point_recorded", evdata);
 
   this._points.push(point);
   return point;
@@ -76,7 +114,8 @@ Canvas.prototype.draw_path = function(point) {
   }
 };
 
-Canvas.prototype.finish_path = function() {
+Canvas.prototype.finish_path = function(reason, point) {
+  this.trigger("pen_path_finished", {reason: reason, point: point});
   this._painting = false;
 };
 
@@ -95,9 +134,9 @@ Canvas.prototype.on_mousemove = function(e) {
 };
 
 Canvas.prototype.on_mouseup = function(e) {
-  this.finish_path();
+  this.finish_path("mouseup", this.get_point_from_event(e));
 };
 
 Canvas.prototype.on_mouseleave = function(e) {
-  this.finish_path();
+  this.finish_path("mouseleave", this.get_point_from_event(e));
 };
