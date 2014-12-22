@@ -140,6 +140,8 @@ Canvas.prototype.start_path = function(point, is_restore) {
   }
 
   this._current_action = {action: "path", points: [point]};
+  // Can't redo anymore!
+  this._actions_undone = [];
 };
 
 Canvas.prototype.end_path = function(reason, point, is_restore) {
@@ -165,22 +167,18 @@ Canvas.prototype.draw_path = function(point, last_point) {
   this.context.stroke();
 };
 
-Canvas.prototype.undo_path = function() {
-  // Such a hack. Undo path requires a restore. Restores are very slow,
-  // but it is more perfect.
-  for (var l=this._points.length, i=l-1; i>=0; i--) {
-    if (this._points[i].start) {
-      break;
-    }
+Canvas.prototype.undo = function() {
+  if (this._actions) {
+    this._actions_undone.push(this._actions.pop());
+    this.restore(this._actions);
   }
-
-  this._points.splice(i, Number.MAX_VALUE);
-  this.restore(this._points);
 };
 
-Canvas.prototype.undo = function() {
-  // just this for now. As there are more things there will be more kinds of undos.
-  this.undo_path();
+Canvas.prototype.redo = function() {
+  if (this._actions_undone) {
+    this._actions.push(this._actions_undone.pop());
+    this.restore(this._actions);
+  }
 };
 
 Canvas.prototype.on_mousedown = function(e) {
@@ -216,6 +214,10 @@ Canvas.prototype.on_keydown = function(e) {
   if (e.ctrlKey) {
     switch (e.keyCode) {
       case 83: // s
+        e.preventDefault();
+      break;
+      case 89: // y
+        this.redo();
         e.preventDefault();
       break;
       case 90: // z
