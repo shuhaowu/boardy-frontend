@@ -20,7 +20,7 @@ Application.prototype.initialize = function() {
   this.buttons.settings = $(".fa-cog", controls).parent();
   this.buttons.share = $(".fa-share-alt", controls).parent();
 
-  this.buttons.undo.on("click", this.canvas.undo_path.bind(this.canvas));
+  this.buttons.undo.on("click", this.canvas.undo.bind(this.canvas));
 };
 
 

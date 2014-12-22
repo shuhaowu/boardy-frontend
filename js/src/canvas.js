@@ -102,7 +102,6 @@ Canvas.prototype.restore = function(actions) {
         if (points.length <= 1) {
           // 0 => huh?
           // 1 => might be an interesting case to worry about later
-          console.warn("points length <= 1")
           continue;
         }
 
@@ -110,7 +109,7 @@ Canvas.prototype.restore = function(actions) {
         for (var j=1, k=points.length; j<k; j++) {
           this.draw_path(points[j], points[j-1]);
         }
-        this.end_path(null, points[points.length-1], true)
+        this.end_path(null, points[points.length-1], true);
       break;
     }
     this._actions.push(actions[i]);
@@ -137,11 +136,11 @@ Canvas.prototype.get_point_from_event = function(e) {
 Canvas.prototype.start_path = function(point, is_restore) {
   if (!is_restore) {
     this.trigger("starting_pen_path", {point: point});
+    // Can't redo anymore!
+    this._actions_undone = [];
   }
 
   this._current_action = {action: "path", points: [point]};
-  // Can't redo anymore!
-  this._actions_undone = [];
 };
 
 Canvas.prototype.end_path = function(reason, point, is_restore) {
@@ -168,14 +167,14 @@ Canvas.prototype.draw_path = function(point, last_point) {
 };
 
 Canvas.prototype.undo = function() {
-  if (this._actions) {
+  if (this._actions.length > 0) {
     this._actions_undone.push(this._actions.pop());
     this.restore(this._actions);
   }
 };
 
 Canvas.prototype.redo = function() {
-  if (this._actions_undone) {
+  if (this._actions_undone.length > 0) {
     this._actions.push(this._actions_undone.pop());
     this.restore(this._actions);
   }
